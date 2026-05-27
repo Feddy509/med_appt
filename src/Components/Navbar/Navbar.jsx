@@ -1,12 +1,36 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
   const [click, setClick] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const navigate = useNavigate();
 
   const handleClick = () => {
     setClick(!click);
+  };
+
+  // Tcheke si itilizatè a konekte chak fwa konpozan an chaje
+  useEffect(() => {
+    const token = sessionStorage.getItem("auth-token");
+    const name = sessionStorage.getItem("name");
+    if (token) {
+      setIsLoggedIn(true);
+      setUsername(name || 'Utilisateur');
+    }
+  }, []);
+
+  // Fonksyon pou jere dekonnesyon an
+  const handleLogout = () => {
+    sessionStorage.removeItem("auth-token");
+    sessionStorage.removeItem("name");
+    sessionStorage.removeItem("phone");
+    sessionStorage.removeItem("email");
+    setIsLoggedIn(false);
+    navigate("/");
+    window.location.reload(); // Rafrechi pou repase eta yo a zewo
   };
 
   return (
@@ -40,16 +64,32 @@ const Navbar = () => {
           <li className="link">
             <Link to="#">Appointments</Link>
           </li>
-          <li className="link">
-            <Link to="/signup">
-              <button className="btn1">Sign Up</button>
-            </Link>
-          </li>
-          <li className="link">
-            <Link to="/login">
-              <button className="btn1">Login</button>
-            </Link>
-          </li>
+
+          {isLoggedIn ? (
+            <>
+              {/* Si itilizatè a konekte, nou afiche non l ak bouton Déconnexion */}
+              <li className="link" style={{ color: '#3685fb', fontWeight: 'bold', alignSelf: 'center' }}>
+                Bienvenue, {username}
+              </li>
+              <li className="link">
+                <button className="btn1" onClick={handleLogout}>Déconnexion</button>
+              </li>
+            </>
+          ) : (
+            <>
+              {/* Si li pa konekte, nou afiche bouton nòmal yo */}
+              <li className="link">
+                <Link to="/signup">
+                  <button className="btn1">Sign Up</button>
+                </Link>
+              </li>
+              <li className="link">
+                <Link to="/login">
+                  <button className="btn1">Login</button>
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </nav>
     </div>
