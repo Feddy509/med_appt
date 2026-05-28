@@ -4,6 +4,10 @@ import Navbar from './Components/Navbar/Navbar'
 import Landing_Page from './Components/Landing_Page/Landing_Page'
 import Sign_Up from './Components/Sign_Up/Sign_Up'
 import Login from './Components/Login/Login'
+
+// ENPÒTASYON NOUVO KONPOZAN AN LA 🎉
+import InstantConsultation from './Components/InstantConsultationBooking/InstantConsultation';
+
 import './App.css'
 
 function App() {
@@ -14,6 +18,9 @@ function App() {
         <Route path="/" element={<Landing_Page />} />
         <Route path="/signup" element={<Sign_Up />} />
         <Route path="/login" element={<Login />} />
+        
+        {/* NOUVO WOUT POU KONSULTASYON AN */}
+        <Route path="/instant-consultation" element={<InstantConsultation />} />
       </Routes>
     </BrowserRouter>
   )
