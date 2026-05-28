@@ -1,36 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
   const [click, setClick] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
+  
   const navigate = useNavigate();
+  const location = useLocation(); // Sa ap fòse Navbar a re-tcheke chak fwa wout la chanje!
 
   const handleClick = () => {
     setClick(!click);
   };
 
-  // Tcheke si itilizatè a konekte chak fwa konpozan an chaje
+  // Tcheke status la chak fwa itilizatè a chanje paj
   useEffect(() => {
     const token = sessionStorage.getItem("auth-token");
     const name = sessionStorage.getItem("name");
+    
     if (token) {
       setIsLoggedIn(true);
       setUsername(name || 'Utilisateur');
+    } else {
+      setIsLoggedIn(false);
+      setUsername('');
     }
-  }, []);
+  }, [location]); // <--- Gwo sekrè a se la! L ap koute "location" kounye a.
 
-  // Fonksyon pou jere dekonnesyon an
   const handleLogout = () => {
-    sessionStorage.removeItem("auth-token");
-    sessionStorage.removeItem("name");
-    sessionStorage.removeItem("phone");
-    sessionStorage.removeItem("email");
+    sessionStorage.clear(); // Netwaye tout kach la yon sèl kou
     setIsLoggedIn(false);
     navigate("/");
-    window.location.reload(); // Rafrechi pou repase eta yo a zewo
   };
 
   return (
@@ -61,13 +62,14 @@ const Navbar = () => {
           <li className="link">
             <Link to="/">Accueil</Link>
           </li>
+          
+          {/* Bouton sa a pral mennen dirèkteman sou paj rechèch la nou sot kreye a! */}
           <li className="link">
-            <Link to="#">Appointments</Link>
+            <Link to="/instant-consultation">Appointments</Link>
           </li>
 
           {isLoggedIn ? (
             <>
-              {/* Si itilizatè a konekte, nou afiche non l ak bouton Déconnexion */}
               <li className="link" style={{ color: '#3685fb', fontWeight: 'bold', alignSelf: 'center' }}>
                 Bienvenue, {username}
               </li>
@@ -77,7 +79,6 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              {/* Si li pa konekte, nou afiche bouton nòmal yo */}
               <li className="link">
                 <Link to="/signup">
                   <button className="btn1">Sign Up</button>
