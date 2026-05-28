@@ -1,85 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import './InstantConsultation.css';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React from 'react';
+// 🎯 Isit la nou soti nan dosye sa a (..) pou n al jwenn dosye DoctorCard ou te kreye nan Components lan!
+import DoctorCard from '../DoctorCard/DoctorCard'; 
 import FindDoctorSearchIC from './FindDoctorSearchIC/FindDoctorSearchIC';
-import DoctorCardIC from './DoctorCardIC/DoctorCardIC';
 
 const InstantConsultation = () => {
-    const [searchParams] = useSearchParams();
-    const [doctors, setDoctors] = useState([]);
-    const [filteredDoctors, setFilteredDoctors] = useState([]);
-    const [isSearched, setIsSearched] = useState(false);
-    
-    const getDoctorsDetails = () => {
-        fetch('https://api.npoint.io/9a5543d36f1460da2f63')
-        .then(res => res.json())
-        .then(data => {
-            if (searchParams.get('speciality')) {
-                // window.reload()
-                const filtered = data.filter(doctor => doctor.speciality.toLowerCase() === searchParams.get('speciality').toLowerCase());
-
-                setFilteredDoctors(filtered);
-                
-                setIsSearched(true);
-                window.reload()
-            } else {
-                setFilteredDoctors([]);
-                setIsSearched(false);
-            }
-            setDoctors(data);
-        })
-        .catch(err => console.log(err));
-    }
-    const handleSearch = (searchText) => {
-
-        if (searchText === '') {
-            setFilteredDoctors([]);
-            setIsSearched(false);
-            } else {
-                
-            const filtered = doctors.filter(
-                (doctor) =>
-                // 
-                doctor.speciality.toLowerCase().includes(searchText.toLowerCase())
-                
-            );
-                
-            setFilteredDoctors(filtered);
-            setIsSearched(true);
-            window.location.reload()
-        }
-    };
-    const navigate = useNavigate();
-    useEffect(() => {
-        getDoctorsDetails();
-        // const authtoken = sessionStorage.getItem("auth-token");
-        // if (!authtoken) {
-        //     navigate("/login");
-        // }
-    }, [searchParams])
+    const doctorsData = [
+        { id: 1, name: "Sarah Johnson", speciality: "Dentist", experience: 9, ratings: 4.9, profilePic: "", careerProfile: "Dédiée à des soins dentaires de haute qualité pour toute la famille." },
+        { id: 2, name: "Jean Dupont", speciality: "Cardiologist", experience: 12, ratings: 4.8, profilePic: "", careerProfile: "Spécialiste renommé en cardiologie clinique." },
+        { id: 3, name: "Marie Paul", speciality: "Dermatologist", experience: 8, ratings: 4.6, profilePic: "", careerProfile: "Experte en soins dermatologiques." }
+    ];
 
     return (
-        <center>
-            <div  className="searchpage-container">
-            <FindDoctorSearchIC onSearch={handleSearch} />
-            <div className="search-results-container">
-            {isSearched ? (
-                <center>
-                    <h2>{filteredDoctors.length} doctors are available {searchParams.get('location')}</h2>
-                    <h3>Book appointments with minimum wait-time & verified doctor details</h3>
-                    {filteredDoctors.length > 0 ? (
-                    filteredDoctors.map(doctor => <DoctorCardIC className="doctorcard" {...doctor} key={doctor.name} />)
-                    ) : (
-                    <p>No doctors found.</p>
-                    )}
-                </center>
-                ) : (
-                ''
-                )}
+        <div className="instant-consultation-container" style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+            <FindDoctorSearchIC />
+            <h2 style={{ marginTop: '40px', color: '#1e293b', textAlign: 'center' }}>Médecins Disponibles</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', marginTop: '20px' }}>
+                {doctorsData.map((doctor) => (
+                    <DoctorCard 
+                        key={doctor.id}
+                        name={doctor.name}
+                        speciality={doctor.speciality}
+                        experience={doctor.experience}
+                        ratings={doctor.ratings}
+                        profilePic={doctor.profilePic}
+                        careerProfile={doctor.careerProfile}
+                    />
+                ))}
             </div>
         </div>
-        </center>
-    )
-}
+    );
+};
 
-export default InstantConsultation
+export default InstantConsultation;
