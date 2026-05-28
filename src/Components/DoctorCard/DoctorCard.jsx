@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-// 🎯 Isit la nou soti pou n al chèche AppointmentForm nan dosye ou te kreye dirèkteman nan Components lan!
 import AppointmentForm from '../AppointmentForm/AppointmentForm';
 import './DoctorCard.css';
 
 const DoctorCard = ({ name, speciality, experience, ratings, profilePic, careerProfile }) => {
+    // Lojik pou jere si gen randevou ki pran ak done randevou a
     const [appointmentData, setAppointmentData] = useState(null);
 
     const handleFormSubmitSuccess = (data) => {
-        setAppointmentData(data); // Sove done yo
+        setAppointmentData(data); // Fonksyon pou REZÈVE (Book)
     };
 
     const handleCancelAppointment = () => {
-        setAppointmentData(null); // Efase randevou a
+        setAppointmentData(null); // Fonksyon pou ANILE (Cancel)
     };
 
     return (
@@ -38,50 +38,65 @@ const DoctorCard = ({ name, speciality, experience, ratings, profilePic, careerP
 
                     {careerProfile && <p className="doctor-career-profile">{careerProfile}</p>}
 
-                    {/* Rezime konplè sou dènye liy lan jan yo te mande l la */}
-                    {appointmentData ? (
-                        <div className="appointment-booked-info" style={{ textAlign: 'left', marginTop: '15px' }}>
-                            <h3 style={{ color: '#94a3b8', fontSize: '1.5rem', fontWeight: 'bold', margin: '10px 0' }}>
-                                Appointment Booked!
-                            </h3>
-                            <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: '5px 0' }}>
-                                Name: {appointmentData.patientName}
-                            </p>
-                            <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: '5px 0' }}>
-                                Phone Number: {appointmentData.phoneNumber}
-                            </p>
-                            <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: '5px 0' }}>
-                                Appointment Date: {appointmentData.appointmentDate}
-                            </p>
-                            <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: '5px 0' }}>
-                                Appointment Time: {appointmentData.appointmentTime}
-                            </p>
-                            <button onClick={handleCancelAppointment} className="btn-cancel-appointment" style={{ backgroundColor: '#007bff', color: 'white', border: 'none', padding: '12px 20px', width: '100%', borderRadius: '6px', fontSize: '1rem', cursor: 'pointer', marginTop: '15px' }}>
-                                Cancel Appointment
-                            </button>
-                        </div>
-                    ) : (
-                        <Popup 
-                            trigger={<button className="btn-book-appointment">Book Appointment</button>} 
-                            modal 
-                            nested
-                            contentStyle={{ maxWidth: '450px', width: '90%', borderRadius: '12px', padding: '20px' }}
-                        >
-                            {close => (
-                                <div className="modal">
-                                    <button className="close-modal-btn" onClick={close} style={{ float: 'right', background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#94a3b8' }}>&times;</button>
-                                    <AppointmentForm 
-                                        doctorName={name} 
-                                        doctorSpeciality={speciality} 
-                                        onSubmitSuccess={(data) => { 
-                                            handleFormSubmitSuccess(data); 
-                                            close(); 
-                                        }} 
-                                    />
-                                </div>
-                            )}
-                        </Popup>
-                    )}
+                    {/* 🎯 KONEKSYON AK REFERANS LAN (doctor-card-options-container) */}
+                    <div className="doctor-card-options-container" style={{ marginTop: '15px' }}>
+                        {appointmentData ? (
+                            /* Seksyon si randevou a fin rezève */
+                            <div className="appointment-booked-info" style={{ textAlign: 'left' }}>
+                                <h3 style={{ color: '#94a3b8', fontSize: '1.5rem', fontWeight: 'bold', margin: '10px 0' }}>
+                                    Appointment Booked!
+                                </h3>
+                                <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: '5px 0' }}>
+                                    Name: {appointmentData.patientName}
+                                </p>
+                                <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: '5px 0' }}>
+                                    Phone Number: {appointmentData.phoneNumber}
+                                </p>
+                                <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: '5px 0' }}>
+                                    Appointment Date: {appointmentData.appointmentDate}
+                                </p>
+                                <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: '5px 0' }}>
+                                    Appointment Time: {appointmentData.appointmentTime}
+                                </p>
+                                
+                                {/* Bouton pou ANILE randevou a ak jesyonè d'événement (Event Handler) li */}
+                                <button 
+                                    onClick={handleCancelAppointment} 
+                                    className="btn-cancel-appointment" 
+                                    style={{ backgroundColor: '#007bff', color: 'white', border: 'none', padding: '12px 20px', width: '100%', borderRadius: '6px', fontSize: '1rem', cursor: 'pointer', marginTop: '15px' }}
+                                >
+                                    Cancel Appointment
+                                </button>
+                            </div>
+                        ) : (
+                            /* Seksyon pou REZÈVE randevou a si poko genyen */
+                            <Popup 
+                                trigger={
+                                    <button className="btn-book-appointment">
+                                        Book Appointment
+                                    </button>
+                                } 
+                                modal 
+                                nested
+                                contentStyle={{ maxWidth: '450px', width: '90%', borderRadius: '12px', padding: '20px' }}
+                            >
+                                {close => (
+                                    <div className="modal">
+                                        <button className="close-modal-btn" onClick={close} style={{ float: 'right', background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#94a3b8' }}>&times;</button>
+                                        <AppointmentForm 
+                                            doctorName={name} 
+                                            doctorSpeciality={speciality} 
+                                            onSubmitSuccess={(data) => { 
+                                                handleFormSubmitSuccess(data); 
+                                                close(); // Kache modal la otomatikman
+                                            }} 
+                                        />
+                                    </div>
+                                )}
+                            </Popup>
+                        )}
+                    </div>
+
                 </div>
             </div>
         </div>
