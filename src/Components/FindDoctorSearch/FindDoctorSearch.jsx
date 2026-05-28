@@ -1,85 +1,59 @@
-import React, { useState } from 'react';
-import './FindDoctorSearchIC.css'; // Li ka sèvi ak menm CSS la
+import React from 'react';
+import DoctorCard from '../DoctorCardIC/DoctorCard'; // Verifye si chemen an bon selon dosye w la
+import './InstantConsultation.css';
 
-const FindDoctorSearch = () => {
-    // 1️⃣ Lojik pou jere sa itilizatè a ap tape ak afichaj lis la
-    const [searchQuery, setSearchQuery] = useState('');
-    const [showList, setShowList] = useState(false);
-
-    // Lis espesyalite yo pou referans lan
-    const specialities = [
-        'Cardiologist',
-        'Dermatologist',
-        'General Physician',
-        'Gynecologist',
-        'Pediatrician'
+const InstantConsultation = () => {
+    // 1️⃣ Done pou plizyè doktè (Etap 4 ak 5)
+    const doctorsData = [
+        {
+            id: 1,
+            name: "Jean Dupont",
+            speciality: "Cardiologist",
+            experience: 12,
+            ratings: 4.8,
+            profilePic: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=200&auto=format&fit=crop",
+            careerProfile: "Spécialiste en cardiologie interventionnelle avec plus de 10 ans d'expérience dans les hôpitaux universitaires."
+        },
+        {
+            id: 2,
+            name: "Marie Paul",
+            speciality: "Dermatologist",
+            experience: 8,
+            ratings: 4.6,
+            profilePic: "https://images.unsplash.com/photo-1594824813573-246434e33963?q=80&w=200&auto=format&fit=crop",
+            careerProfile: "Experte en dermatologie clinique et esthétique, passionnée par la santé de la peau et la prévention."
+        },
+        {
+            id: 3,
+            name: "Pierre Noel",
+            speciality: "Pediatrician",
+            experience: 15,
+            ratings: 4.9,
+            profilePic: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=200&auto=format&fit=crop",
+            careerProfile: "Dédié aux soins des enfants et des nourrissons, ancien chef de clinique en pédiatrie."
+        }
     ];
 
-    const handleSelectSpeciality = (speciality) => {
-        setSearchQuery(speciality);
-        setShowList(false); // Kache lis la yon fwa li fin chwazi yonn
-    };
-
     return (
-        <div className="find-doctor-search-container">
-            <h2>Trouver un médecin et réserver une consultation</h2>
+        <div className="instant-consultation-container" style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+            <h2>Médecins Disponibles pour une Consultation Instantanée</h2>
             
-            <div className="search-box-container" style={{ position: 'relative', maxWidth: '400px', margin: '20px 0' }}>
-                {/* 2️⃣ Champ de saisie ak onFocus ak onBlur jan remak la mande l */}
-                <input
-                    type="text"
-                    className="form-control search-input"
-                    placeholder="Entrez une spécialité (ex: Cardiologist)..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setShowList(true)} // Afiche lis la lè l klike andedan
-                    onBlur={() => {
-                        // Yon ti dèlè (timeout) pou bay tan pou klike sou yon eleman anvan l kache
-                        setTimeout(() => setShowList(false), 200);
-                    }}
-                />
-
-                {/* 3️⃣ Afichaj lis espesyalite yo si showList la vre */}
-                {showList && (
-                    <ul className="speciality-list" style={{
-                        position: 'absolute',
-                        top: '100%',
-                        left: 0,
-                        right: 0,
-                        backgroundColor: '#fff',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        listStyle: 'none',
-                        padding: '5px 0',
-                        margin: 0,
-                        zIndex: 1000,
-                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                    }}>
-                        {specialities
-                            .filter(spec => spec.toLowerCase().includes(searchQuery.toLowerCase()))
-                            .map((speciality, index) => (
-                                <li 
-                                    key={index} 
-                                    onMouseDown={() => handleSelectSpeciality(speciality)} // onMouseDown kouri anvan onBlur
-                                    style={{
-                                        padding: '10px 15px',
-                                        cursor: 'pointer',
-                                        borderBottom: index !== specialities.length - 1 ? '1px solid #eee' : 'none'
-                                    }}
-                                    className="speciality-item"
-                                >
-                                    {speciality}
-                                </li>
-                            ))
-                        }
-                        {specialities.filter(spec => spec.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
-                            <li style={{ padding: '10px 15px', color: '#888' }}>Aucune spécialité trouvée</li>
-                        )}
-                    </ul>
-                )}
+            <div className="doctors-list-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '30px' }}>
+                {/* 2️⃣ Boukle sou lis la pou afiche chak doktè nan yon DoctorCard (Etap 7) */}
+                {doctorsData.map((doctor) => (
+                    <DoctorCard 
+                        key={doctor.id}
+                        name={doctor.name}
+                        speciality={doctor.speciality}
+                        experience={doctor.experience}
+                        ratings={doctor.ratings}
+                        profilePic={doctor.profilePic}
+                        careerProfile={doctor.careerProfile}
+                    />
+                ))}
             </div>
         </div>
     );
 };
 
-export default FindDoctorSearch;
+export default InstantConsultation;

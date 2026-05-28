@@ -1,0 +1,140 @@
+/* Kontenè prensipal kat doktè a */
+.doctor-card-container {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    max-width: 650px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.doctor-card-container:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Layout entèn anndan kat la */
+.doctor-card-main-content {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* Foto profil doktè a */
+.doctor-card-profile-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f1f5f9;
+}
+
+/* 🟢 Kontenè detay yo kote bouton an chita a (Etap 6 & 8) */
+.doctor-card-details-container {
+    flex: 1;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Non doktè a */
+.doctor-name {
+    margin: 0 0 4px 0;
+    color: #1e293b;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+/* Espesyalite */
+.doctor-speciality {
+    margin: 0 0 12px 0;
+    color: #3685fb;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+/* Eksperyans */
+.doctor-experience {
+    margin: 0 0 8px 0;
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+/* Evalyasyon / Zetwal yo */
+.doctor-ratings {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.star-icon {
+    font-size: 1.1rem;
+}
+
+.rating-value {
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.9rem;
+}
+
+/* Pwofil karyè (Deskripsyon) */
+.doctor-career-profile {
+    margin: 4px 0 18px 0;
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+/* Bouton Prendre rendez-vous ki nan fen detay yo */
+.btn-book-appointment {
+    background-color: #3685fb;
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: fit-content;
+    align-self: flex-start; /* Pou bouton an pa laji nèt si n pa vle */
+}
+
+.btn-book-appointment:hover {
+    background-color: #1d6ee5;
+}
+
+.btn-book-appointment:active {
+    transform: scale(0.98);
+}
+
+/* Adaptasyon pou ti ekran (Mobil) */
+@media (max-width: 500px) {
+    .doctor-card-main-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .doctor-card-details-container {
+        align-items: center;
+        text-align: center;
+    }
+    
+    .doctor-ratings {
+        justify-content: center;
+    }
+    
+    .btn-book-appointment {
+        width: 100%;
+        align-self: center;
+    }
+}
