@@ -3,13 +3,82 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import './ReviewForm.css';
 
+// 🎯 FÒM LAN (GiveReviews) - Avèk lojik ak id ki kòrèk nèt
+function GiveReviews({ doctorName, onReviewSubmit }) {
+  const [showWarning, setShowWarning] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    review: '',
+    rating: 5 // Nou mete l kòm yon chif dirèkteman
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.name && formData.review && formData.rating) {
+      setShowWarning(false);
+      onReviewSubmit(formData);
+    } else {
+      setShowWarning(true);
+    }
+  };
+
+  return (
+    <div className="review-modal-content">
+      <form onSubmit={handleSubmit}>
+        <h2>Donner votre avis pour le Dr. {doctorName}</h2>
+        
+        {showWarning && <p className="warning" style={{ color: 'red' }}>Veuillez remplir tous les champs.</p>}
+        
+        <div className="form-group">
+          <label htmlFor="name">Nom :</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            value={formData.name} 
+            onChange={handleChange} 
+            required 
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="rating">Note (1-5) :</label>
+          <select id="rating" name="rating" value={formData.rating} onChange={handleChange}>
+            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+            <option value="4">⭐⭐⭐⭐ (4)</option>
+            <option value="3">⭐⭐⭐ (3)</option>
+            <option value="2">⭐⭐ (2)</option>
+            <option value="1">⭐ (1)</option>
+          </select>
+        </div>
+        
+        <div className="form-group">
+          <label htmlFor="review">Avis / Commentaire :</label>
+          <textarea 
+            id="review" 
+            name="review" 
+            value={formData.review} 
+            onChange={handleChange} 
+            required 
+          />
+        </div>
+        
+        <button type="submit" className="btn-submit-review">Soumettre</button>
+      </form>
+    </div>
+  );
+}
+
+// 🎯 KONPOZAN PRENSIPAL LA (ReviewForm)
 const ReviewForm = () => {
     const [consultations, setConsultations] = useState([]);
     const [reviews, setReviews] = useState({});
-    const [formData, setFormData] = useState({ name: '', review: '', rating: 5 });
 
     useEffect(() => {
-        // 1. Nou rekiperé randevou ki nan localStorage la (sa ou te simulation an)
         const storedDoctor = JSON.parse(localStorage.getItem('doctorData'));
         let activeAppointments = [];
         
@@ -26,43 +95,23 @@ const ReviewForm = () => {
             }
         }
 
-        // 2. 🎯 NOU AJOUTE 2 LÒT KONSILTASYON ANPLIS DIREKTEMAN LA POU TABLO A GEN 3 LIY
         const extraConsultations = [
-            {
-                id: 2,
-                doctorName: "Jean Dupont",
-                speciality: "Cardiologist",
-                patientName: "Fednel Charite",
-                date: "2026-05-20"
-            },
-            {
-                id: 3,
-                doctorName: "Marie Paul",
-                speciality: "Dermatologist",
-                patientName: "Fednel Charite",
-                date: "2026-05-25"
-            }
+            { id: 2, doctorName: "Jean Dupont", speciality: "Cardiologue", patientName: "Fednel Charite", date: "2026-05-20" },
+            { id: 3, doctorName: "Marie Paul", speciality: "Dermatologue", patientName: "Fednel Charite", date: "2026-05-25" }
         ];
 
-        // Konbine randevou an dirèk la ak 2 konsiltasyon anplis yo
         setConsultations([...activeAppointments, ...extraConsultations]);
     }, []);
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleReviewSubmit = (e, consultationId) => {
-        e.preventDefault();
+    const handleSaveReview = (consultationId, submittedData) => {
         setReviews({
             ...reviews,
             [consultationId]: {
-                reviewText: formData.review,
-                ratingStars: parseInt(formData.rating)
+                name: submittedData.name,
+                reviewText: submittedData.review,
+                ratingStars: parseInt(submittedData.rating, 10) // Nou fòse l tounen Integer baz 10
             }
         });
-        setFormData({ name: '', review: '', rating: 5 });
     };
 
     return (
@@ -75,11 +124,11 @@ const ReviewForm = () => {
                 <table className="review-table">
                     <thead>
                         <tr>
-                            <th>Numéro</th>
-                            <th>Nom du Docteur</th>
-                            <th>Spécialité</th>
-                            <th>Donner un avis</th>
-                            <th>Votre commentaire</th>
+                            <th>Serial Number</th>
+                            <th>Doctor Name</th>
+                            <th>Doctor Speciality</th>
+                            <th>Provide feedback</th>
+                            <th>Review Given</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,7 +141,7 @@ const ReviewForm = () => {
                                     <Popup
                                         trigger={
                                             <button className="btn-give-review" disabled={!!reviews[consultation.id]}>
-                                                {reviews[consultation.id] ? "Avis Donné" : "Click Here"}
+                                                {reviews[consultation.id] ? "Avis Transmis" : "Cliquez ici"}
                                             </button>
                                         }
                                         modal
@@ -102,44 +151,39 @@ const ReviewForm = () => {
                                         {close => (
                                             <div className="review-modal">
                                                 <button className="close-modal-btn" onClick={close}>&times;</button>
-                                                <h3>Laisser un avis pour Dr. {consultation.doctorName}</h3>
-                                                
-                                                <form onSubmit={(e) => { handleReviewSubmit(e, consultation.id); close(); }}>
-                                                    <div className="form-group">
-                                                        <label>Votre Nom:</label>
-                                                        <input type="text" name="name" defaultValue={consultation.patientName} required />
-                                                    </div>
-                                                    
-                                                    <div className="form-group">
-                                                        <label>Note (Stars):</label>
-                                                        <select name="rating" value={formData.rating} onChange={handleInputChange}>
-                                                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                                                            <option value="4">⭐⭐⭐⭐ (4)</option>
-                                                            <option value="3">⭐⭐⭐ (3)</option>
-                                                            <option value="2">⭐⭐ (2)</option>
-                                                            <option value="1">⭐ (1)</option>
-                                                        </select>
-                                                    </div>
-                                                    
-                                                    <div className="form-group">
-                                                        <label>Commentaire:</label>
-                                                        <textarea name="review" rows="4" value={formData.review} onChange={handleInputChange} required></textarea>
-                                                    </div>
-                                                    
-                                                    <button type="submit" className="btn-submit-review">Soumettre l'avis</button>
-                                                </form>
+                                                <GiveReviews 
+                                                    doctorName={consultation.doctorName} 
+                                                    onReviewSubmit={(data) => {
+                                                        handleSaveReview(consultation.id, data);
+                                                        close();
+                                                    }}
+                                                />
                                             </div>
                                         )}
                                     </Popup>
                                 </td>
+                                
+                                {/* 🎯 SEKSYON ANBÒDHI WOUJ LA: Lòd la ranje 100% kounye a */}
                                 <td>
                                     {reviews[consultation.id] ? (
-                                        <div className="submitted-review">
-                                            <span className="stars">{"⭐".repeat(reviews[consultation.id].ratingStars)}</span>
-                                            <p>{reviews[consultation.id].reviewText}</p>
+                                        <div className="submitted-review" style={{ display: 'flex', flexDirection: 'column', gap: '6px', textAlign: 'left' }}>
+                                            {/* 1. Nom an premye */}
+                                            <p style={{ margin: 0, fontSize: '0.95rem', fontWeight: 'bold', color: '#1e293b' }}>
+                                                {reviews[consultation.id].name}
+                                            </p>
+                                            
+                                            {/* 2. Commentaire an dezyèm */}
+                                            <p style={{ margin: 0, fontSize: '0.90rem', color: '#475569', fontStyle: 'italic' }}>
+                                                "{reviews[consultation.id].reviewText}"
+                                            </p>
+                                            
+                                            {/* 3. Note/Stars anba nèt */}
+                                            <span className="stars" style={{ fontSize: '0.90rem', color: '#f59e0b' }}>
+                                                {"⭐".repeat(reviews[consultation.id].ratingStars || 5)}
+                                            </span>
                                         </div>
                                     ) : (
-                                        <span className="pending-review">Pas encore d'avis</span>
+                                        ""
                                     )}
                                 </td>
                             </tr>
