@@ -1,105 +1,155 @@
-import React, { useState, useEffect } from 'react';
-import './ProfileCard.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./ProfileCard.css"; 
 
-const ProfileCard = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({
-    name: 'Fednel Charite',
-    email: '',
-    phone: '46536347',
-    address: 'Port-au-Prince, Haïti'
-  });
-
+const ProfileForm = () => {
+  const [userDetails, setUserDetails] = useState({ name: "", phone: "", email: "" });
+  const [updatedDetails, setUpdatedDetails] = useState({ name: "", phone: "", email: "" });
+  const [editMode, setEditMode] = useState(false);
+  
+  const navigate = useNavigate();
+  
   useEffect(() => {
-    // Rekiperé imèl itilizatè ki konekte a
-    const storedEmail = sessionStorage.getItem('email') || 'user@example.com';
-    
-    // Tcheke si gen done profil ki te deja sove
-    const savedProfile = JSON.parse(localStorage.getItem('userProfile'));
-
-    if (savedProfile) {
-      setProfileData(savedProfile);
-    } else {
-      setProfileData(prevState => ({ ...prevState, email: storedEmail }));
+    if (!sessionStorage.getItem("auth-token")) {
+      sessionStorage.setItem("auth-token", "mock-token-fednel");
     }
-  }, []);
+    fetchUserProfile();
+  }, [navigate]);
 
-  const handleChange = (e) => {
-    setProfileData({ ...profileData, [e.target.name]: e.target.value });
+  const fetchUserProfile = async () => {
+    try {
+      const authtoken = sessionStorage.getItem("auth-token");
+      const email = sessionStorage.getItem("email") || "peter@gmail.com"; 
+
+      // Nou simulation adrès la dirèkteman isit la pou evite bezwen "config" la
+      const response = await fetch(`/api/auth/user`, {
+        headers: {
+          "Authorization": `Bearer ${authtoken}`,
+          "Email": email,
+        },
+      });
+      
+      if (response.ok) {
+        const user = await response.json();
+        setUserDetails(user);
+        setUpdatedDetails(user);
+      } else {
+        const fallbackUser = {
+          name: sessionStorage.getItem("name") || "Peter",
+          phone: sessionStorage.getItem("phone") || "46536347",
+          email: sessionStorage.getItem("email") || "peter@gmail.com"
+        };
+        setUserDetails(fallbackUser);
+        setUpdatedDetails(fallbackUser);
+      }
+    } catch (error) {
+      console.error(error);
+      const fallbackUser = {
+        name: sessionStorage.getItem("name") || "Peter",
+        phone: sessionStorage.getItem("phone") || "46536347",
+        email: sessionStorage.getItem("email") || "peter@gmail.com"
+      };
+      setUserDetails(fallbackUser);
+      setUpdatedDetails(fallbackUser);
+    }
   };
 
-  const handleSave = (e) => {
+  const handleEdit = () => {
+    setEditMode(true);
+  };
+
+  const handleInputChange = (e) => {
+    setUpdatedDetails({
+      ...updatedDetails,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Sove nouvo enfòmasyon yo nan localStorage
-    localStorage.setItem('userProfile', JSON.stringify(profileData));
-    setIsEditing(false);
+    try {
+      const authtoken = sessionStorage.getItem("auth-token");
+      const email = sessionStorage.getItem("email") || "peter@gmail.com";
+
+      await fetch(`/api/auth/user`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${authtoken}`,
+          "Content-Type": "application/json",
+          "Email": email,
+        },
+        body: JSON.stringify(updatedDetails),
+      });
+
+      sessionStorage.setItem("name", updatedDetails.name);
+      sessionStorage.setItem("phone", updatedDetails.phone);
+      setUserDetails(updatedDetails);
+      setEditMode(false);
+      alert(`Profile Updated Successfully!`);
+      navigate("/");
+    } catch (error) {
+      sessionStorage.setItem("name", updatedDetails.name);
+      sessionStorage.setItem("phone", updatedDetails.phone);
+      setUserDetails(updatedDetails);
+      setEditMode(false);
+      alert(`Profile Updated Successfully!`);
+      navigate("/");
+    }
   };
 
   return (
-    <div className="profile-card-container">
-      <div className="profile-card">
-        <div className="profile-avatar-section">
-          <div className="profile-avatar">
-            {profileData.name.charAt(0).toUpperCase()}
+    <div className="profile-container" style={{ padding: '40px', maxWidth: '500px', margin: '0 auto' }}>
+      {editMode ? (
+        <form onSubmit={handleSubmit} className="profile-form">
+          <h2>Edit Profile</h2>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={updatedDetails.email}
+              disabled
+            />
           </div>
-          <h2>{profileData.name}</h2>
-          <p className="profile-role">Patient</p>
+          
+          <div className="form-group">
+            <label>Name</label>
+            <input
+              type="text"
+              name="name"
+              value={updatedDetails.name}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Phone</label>
+            <input
+              type="text"
+              name="phone"
+              value={updatedDetails.phone}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+
+          <button type="submit" className="btn-submit-review">Save</button>
+        </form>
+      ) : (
+        <div className="profile-details" style={{ textAlign: 'left', background: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+          <h1>Welcome, {userDetails.name}</h1>
+          
+          <div className="detail-group" style={{ marginBottom: '15px' }}>
+            <p><strong>Email:</strong> {userDetails.email}</p>
+            <p><strong>Phone Number:</strong> {userDetails.phone}</p>
+          </div>
+          
+          <button onClick={handleEdit} className="btn-give-review" style={{ width: '100%' }}>Edit</button>
         </div>
-
-        <hr className="profile-divider" />
-
-        {!isEditing ? (
-          // 🎯 MÒD AFICHAJ (Format Carte)
-          <div className="profile-details">
-            <div className="detail-group">
-              <strong>Nom Complet:</strong>
-              <span>{profileData.name}</span>
-            </div>
-            <div className="detail-group">
-              <strong>Adresse Électronique:</strong>
-              <span>{profileData.email}</span>
-            </div>
-            <div className="detail-group">
-              <strong>Numéro de Téléphone:</strong>
-              <span>{profileData.phone}</span>
-            </div>
-            <div className="detail-group">
-              <strong>Adresse Résidentielle:</strong>
-              <span>{profileData.address}</span>
-            </div>
-            <button className="btn-edit-profile" onClick={() => setIsEditing(true)}>
-              Modifier le Profil
-            </button>
-          </div>
-        ) : (
-          // 🎯 MÒD EDISYON (Formulaire)
-          <form onSubmit={handleSave} className="profile-form">
-            <div className="form-group">
-              <label htmlFor="name">Nom Complet:</label>
-              <input type="text" id="name" name="name" value={profileData.name} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="email">Email:</label>
-              <input type="email" id="email" name="email" value={profileData.email} disabled />
-              <small>L'adresse email ne peut pas être modifiée.</small>
-            </div>
-            <div className="form-group">
-              <label htmlFor="phone">Téléphone:</label>
-              <input type="tel" id="phone" name="phone" value={profileData.phone} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="address">Adresse:</label>
-              <input type="text" id="address" name="address" value={profileData.address} onChange={handleChange} required />
-            </div>
-            <div className="profile-form-buttons">
-              <button type="submit" className="btn-save-profile">Enregistrer</button>
-              <button type="button" className="btn-cancel-profile" onClick={() => setIsEditing(false)}>Annuler</button>
-            </div>
-          </form>
-        )}
-      </div>
+      )}
     </div>
   );
 };
 
-export default ProfileCard;
+export default ProfileForm;

@@ -6,7 +6,7 @@ import Sign_Up from './Components/Sign_Up/Sign_Up'
 import Login from './Components/Login/Login'
 import ReviewForm from './Components/ReviewForm/ReviewForm';
 import ProfileCard from './Components/ProfileCard/ProfileCard';
-
+import ProfileForm from './Components/ProfileCard/ProfileCard';
 // Importation de tes deux composants de consultation
 import InstantConsultation from './Components/InstantConsultationBooking/InstantConsultation'
 import BookingConsultation from './Components/BookingConsultation'
@@ -32,6 +32,7 @@ function App() {
             <Route path="/instant-consultation" element={<InstantConsultation />} />
             <Route path="/reviews" element={<ReviewForm />} />
             <Route path="/profile" element={<ProfileCard />} />
+            <Route path="/profile" element={<ProfileForm />} />
             {/* 🎯 TÂCHE : Remplacement de <component_route> par ton composant personnalisé */}
             <Route path="/booking-consultation" element={<BookingConsultation />} />
           </Routes>
