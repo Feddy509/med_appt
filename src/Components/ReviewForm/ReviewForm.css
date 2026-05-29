@@ -1,110 +1,199 @@
+/* --- Konteynè Prensipal Tablo a --- */
 .review-form-container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 30px;
     background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .review-title {
-    color: #1e293b;
-    margin-bottom: 25px;
-    font-size: 1.6rem;
+    color: #0f172a;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: left;
+    border-bottom: 3px solid #3685fb;
+    padding-bottom: 10px;
+    display: inline-block;
 }
 
+/* --- Estil Tablo a --- */
 .review-table {
     width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-.review-table th, .review-table td {
-    padding: 14px 16px;
-    border-bottom: 1px solid #e2e8f0;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 10px;
 }
 
 .review-table th {
     background-color: #f8fafc;
     color: #475569;
     font-weight: 600;
+    padding: 16px 20px;
+    text-align: left;
+    border-bottom: 2px solid #e2e8f0;
+    font-size: 0.95rem;
 }
 
+.review-table td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+.review-table tr:hover td {
+    background-color: #f8fafc; /* Ti koulè gri dous lè sourit la pase sou yon liy */
+}
+
+/* --- Bouton "Cliquez ici" (Provide Feedback) --- */
 .btn-give-review {
     background-color: #3685fb;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: 10px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: 500;
-    transition: background 0.2s;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 6px rgba(54, 133, 251, 0.15);
+}
+
+.btn-give-review:hover:not(:disabled) {
+    background-color: #1d69d7;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(54, 133, 251, 0.25);
 }
 
 .btn-give-review:disabled {
     background-color: #cbd5e1;
+    color: #94a3b8;
     cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }
 
-.review-modal h3 {
-    margin-top: 0;
-    color: #1e293b;
+/* --- Seksyon kòmantè ki afiche a (Review Given) --- */
+.submitted-review {
+    background-color: #f0fdf4; /* Ti background vèt limyè pou montre siksè */
+    border-left: 4px solid #10b981;
+    padding: 10px 14px;
+    border-radius: 6px;
+    max-width: 280px;
 }
 
+.submitted-review p {
+    word-break: break-word;
+}
+
+/* --- Estil Modal / Fòm nan (Popup) --- */
+.review-modal {
+    position: relative;
+    background: #ffffff;
+}
+
+.review-modal-content h2 {
+    color: #0f172a;
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: color 0.2s;
+}
+
+.close-modal-btn:hover {
+    color: #64748b;
+}
+
+/* --- Chan nan fòm lan --- */
 .form-group {
-    margin-bottom: 15px;
-    text-align: left;
+    margin-bottom: 20px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
-    color: #475569;
-    font-weight: 500;
+    margin-bottom: 8px;
+    color: #334155;
+    font-weight: 600;
+    font-size: 0.9rem;
 }
 
-.form-group input, .form-group select, .form-group textarea {
+.form-group input, 
+.form-group select, 
+.form-group textarea {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: 1px solid #cbd5e1;
-    border-radius: 6px;
+    border-radius: 8px;
     box-sizing: border-box;
+    font-size: 0.95rem;
+    color: #334155;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.form-group input:focus, 
+.form-group select:focus, 
+.form-group textarea:focus {
+    outline: none;
+    border-color: #3685fb;
+    box-shadow: 0 0 0 3px rgba(54, 133, 251, 0.15);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* --- Bouton Soumettre fòm nan --- */
 .btn-submit-review {
     background-color: #10b981;
     color: white;
     border: none;
-    padding: 12px;
+    padding: 14px;
     width: 100%;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.15);
 }
 
-.close-modal-btn {
-    float: right;
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: #94a3b8;
+.btn-submit-review:hover {
+    background-color: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.25);
 }
 
-.submitted-review .stars {
-    color: #f59e0b;
-    display: block;
-    margin-bottom: 2px;
+/* Mesaj Avètisman */
+.warning {
+    background-color: #fef2f2;
+    color: #dc2626;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #fca5a5;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    text-align: left;
 }
 
-.submitted-review p {
-    margin: 0;
+.no-consultation {
+    color: #64748b;
     font-style: italic;
-    color: #475569;
-}
-
-.pending-review {
-    color: #94a3b8;
-    font-style: italic;
+    padding: 20px 0;
 }
