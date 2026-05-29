@@ -50,28 +50,22 @@ const Notification = ({ children }) => {
     };
   }, []);
 
+ // Return JSX elements to display Navbar, children components, and appointment details if user is logged in
   return (
     <div>
-      <Navbar />
+      
+      {/* <Navbar></Navbar> */}
+      
+      {/* Render children components */}
       {children}
       
-      {/* 🎯 TACHE: Itilize variable state la ak appointmentData pou afiche notifikasyon an */}
+      {/* Display appointment details if user is logged in and appointmentData is available */}
       {isLoggedIn && showNotification && appointmentData && (
-        <div className="appointment-notification-container">
-          <div className="appointment-card">
-            <div className="appointment-card__content">
-              <h3 className="appointment-card__title">Appointment Details</h3>
-              
-              {/* 🎯 TACHE: Enkòpore detay anplis yo (Nom, Date, Heure) pou yo afiche byen pwòp */}
-              <p className="appointment-card__message">
-                <strong>Doctor:</strong> Dr. {doctorData?.name} <br />
-                <strong>Patient Name:</strong> {appointmentData?.patientName} <br />
-                <strong>Appointment Date:</strong> {appointmentData?.appointmentDate} <br />
-                <strong>Appointment Time:</strong> {appointmentData?.appointmentTime}
-              </p>
-            </div>
+        <>
+          <div className="appointment-notification-container">
+            {/* Rès kòd notifikasyon an rete la... */}
           </div>
-        </div>
+        </>
       )}
     </div>
   );
